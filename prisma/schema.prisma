@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Member {
+  id        Int      @id @default(autoincrement())
+  name      String
+  color     String   @default("#1D9E75")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  reviews Review[]
+
+  @@map("members")
+}
+
+model Book {
+  id        Int      @id @default(autoincrement())
+  title     String
+  author    String
+  coverUrl  String?  @map("cover_url")
+  genre     String?
+  startDate DateTime? @map("start_date") @db.Date
+  endDate   DateTime? @map("end_date") @db.Date
+  createdAt DateTime @default(now()) @map("created_at")
+
+  reviews  Review[]
+  meeting  Meeting?
+
+  @@map("books")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  content   String
+  rating    Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  book     Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId   Int    @map("book_id")
+
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  memberId Int    @map("member_id")
+
+  @@unique([bookId, memberId])
+  @@map("reviews")
+}
+
+model Meeting {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @db.Date
+  location  String?
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  book   Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId Int  @unique @map("book_id")
+
+  @@map("meetings")
+}
