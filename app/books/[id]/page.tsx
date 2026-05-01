@@ -3,17 +3,10 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import ReviewForm from "./ReviewForm";
 
-export const revalidate = 60;
-export const dynamicParams = true;
+export const dynamic = "force-dynamic";
 
 interface Props {
     params: Promise<{ id: string }>;
-}
-
-export async function generateStaticParams() {
-    const books = await prisma.book.findMany({ select: { id: true } });
-
-    return books.map((book) => ({ id: book.id.toString() }));
 }
 
 export default async function BookDetailPage({ params }: Props) {

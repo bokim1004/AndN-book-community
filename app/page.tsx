@@ -2,7 +2,7 @@ import { prisma } from "@/app/src/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 function getProgress(startDate: Date, endDate: Date): number {
   const now = Date.now();
