@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import HeaderNav from "@/app/HeaderNav";
 import Link from "next/link";
 import "./globals.css";
 
@@ -15,11 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <Link href="/" className="font-bold text-emerald-700 text-base tracking-tight">
                         AndN 북클럽
                     </Link>
-                    <div className="flex gap-5 ml-2">
-                        <Link href="/books" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">책 목록</Link>
-                        <Link href="/calendar" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">캘린더</Link>
-                        <Link href="/stats" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">통계</Link>
-                    </div>
+                    <HeaderNav />
                     {/* <Link href="/admin" className="ml-auto text-sm text-gray-400 hover:text-gray-600 transition-colors">관리자</Link> */}
                 </nav>
                 <main className="flex-1">{children}</main>
