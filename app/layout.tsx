@@ -6,6 +6,25 @@ import "./globals.css";
 export const metadata: Metadata = {
     title: "AndN 북클럽",
     description: "AndN 독서 모임 커뮤니티",
+    openGraph: {
+        title: "AndN 북클럽",
+        description: "AndN 독서 모임 커뮤니티",
+        images: [
+            {
+                url: "/bg_img.jpg",
+                width: 1200,
+                height: 420,
+                alt: "AndN 북클럽",
+            },
+        ],
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "AndN 북클럽",
+        description: "AndN 독서 모임 커뮤니티",
+        images: ["/bg_img.jpg"],
+    },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

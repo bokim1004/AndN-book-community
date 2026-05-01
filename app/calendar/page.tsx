@@ -1,7 +1,7 @@
 import CalendarView from "@/app/calendar/CalendarView";
 import { prisma } from "@/app/src/lib/prisma";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 function monthKey(date: Date) {
   return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;

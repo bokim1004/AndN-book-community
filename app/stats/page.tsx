@@ -1,6 +1,6 @@
 import { prisma } from "@/app/src/lib/prisma";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function StatsPage() {
     const [books, reviews, members] = await Promise.all([

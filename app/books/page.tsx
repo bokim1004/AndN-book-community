@@ -1,7 +1,8 @@
 import { prisma } from "@/app/src/lib/prisma";
+import Image from "next/image";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const GENRE_TAG_STYLES: Record<string, string> = {
     기획: "bg-amber-50 text-amber-700 border-amber-100",
@@ -35,9 +36,11 @@ export default async function BooksPage() {
                         <Link key={book.id} href={`/books/${book.id}`} className="group">
                             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md hover:border-emerald-200 transition-all">
                                 {book.coverUrl ? (
-                                    <img
+                                    <Image
                                         src={book.coverUrl}
                                         alt={book.title}
+                                        width={240}
+                                        height={360}
                                         className="w-full h-44 object-cover"
                                     />
                                 ) : (

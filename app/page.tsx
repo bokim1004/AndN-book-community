@@ -1,7 +1,8 @@
 import { prisma } from "@/app/src/lib/prisma";
+import Image from "next/image";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 function getProgress(startDate: Date, endDate: Date): number {
   const now = Date.now();
@@ -68,9 +69,12 @@ export default async function HomePage() {
         <div className="relative max-w-lg mx-auto">
           {/* 배너 이미지 */}
           <div className="rounded-2xl overflow-hidden shadow-md mb-8">
-            <img
-              src="/bg_img.png"
+            <Image
+              src="/bg_img.jpg"
               alt="AndN 북클럽"
+              width={1200}
+              height={420}
+              priority
               className="w-full object-cover"
             />
           </div>
@@ -123,9 +127,11 @@ export default async function HomePage() {
             <Link href={`/books/${featuredBook.id}`} className="group block">
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 p-5 flex gap-5">
                 {featuredBook.coverUrl ? (
-                  <img
+                  <Image
                     src={featuredBook.coverUrl}
                     alt={featuredBook.title}
+                    width={160}
+                    height={224}
                     className="w-20 h-28 object-cover rounded-xl shadow-md flex-shrink-0"
                   />
                 ) : (
@@ -201,9 +207,11 @@ export default async function HomePage() {
                 >
                   <div className="relative">
                     {book.coverUrl ? (
-                      <img
+                      <Image
                         src={book.coverUrl}
                         alt={book.title}
+                        width={240}
+                        height={360}
                         className="w-full aspect-[2/3] object-cover rounded-xl shadow-sm group-hover:shadow-md transition-all duration-200"
                       />
                     ) : (

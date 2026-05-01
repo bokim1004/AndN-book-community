@@ -1,11 +1,19 @@
 import { prisma } from "@/app/src/lib/prisma";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import ReviewForm from "./ReviewForm";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+export const dynamicParams = true;
 
 interface Props {
     params: Promise<{ id: string }>;
+}
+
+export async function generateStaticParams() {
+    const books = await prisma.book.findMany({ select: { id: true } });
+
+    return books.map((book) => ({ id: book.id.toString() }));
 }
 
 export default async function BookDetailPage({ params }: Props) {
@@ -36,9 +44,11 @@ export default async function BookDetailPage({ params }: Props) {
             {/* 책 정보 */}
             <div className="bg-white rounded-xl border border-gray-200 p-6 flex gap-5">
                 {book.coverUrl ? (
-                    <img
+                    <Image
                         src={book.coverUrl}
                         alt={book.title}
+                        width={224}
+                        height={320}
                         className="w-28 h-40 object-cover rounded-lg flex-shrink-0 shadow-sm"
                     />
                 ) : (
