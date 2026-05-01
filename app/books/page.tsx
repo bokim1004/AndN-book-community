@@ -1,6 +1,13 @@
 import { prisma } from "@/app/src/lib/prisma";
 import Link from "next/link";
 
+const GENRE_TAG_STYLES: Record<string, string> = {
+    기획: "bg-amber-50 text-amber-700 border-amber-100",
+    시스템: "bg-sky-50 text-sky-700 border-sky-100",
+    사람: "bg-rose-50 text-rose-700 border-rose-100",
+    기타: "bg-gray-50 text-gray-600 border-gray-200",
+};
+
 export default async function BooksPage() {
     const books = await prisma.book.findMany({
         orderBy: { startDate: "desc" },
@@ -43,7 +50,11 @@ export default async function BooksPage() {
                                     <p className="text-xs text-gray-400 mt-1">{book.author}</p>
                                     <div className="flex items-center justify-between mt-2">
                                         {book.genre && (
-                                            <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
+                                            <span
+                                                className={`text-xs border px-2 py-0.5 rounded-full ${
+                                                    GENRE_TAG_STYLES[book.genre] ?? "bg-gray-50 text-gray-600 border-gray-100"
+                                                }`}
+                                            >
                                                 {book.genre}
                                             </span>
                                         )}

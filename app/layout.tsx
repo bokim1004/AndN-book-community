@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <Link href="/calendar" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">캘린더</Link>
                         <Link href="/stats" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">통계</Link>
                     </div>
-                    <Link href="/admin" className="ml-auto text-sm text-gray-400 hover:text-gray-600 transition-colors">관리자</Link>
+                    {/* <Link href="/admin" className="ml-auto text-sm text-gray-400 hover:text-gray-600 transition-colors">관리자</Link> */}
                 </nav>
                 <main className="flex-1">{children}</main>
             </body>

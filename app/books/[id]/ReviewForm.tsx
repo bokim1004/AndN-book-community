@@ -108,7 +108,7 @@ export default function ReviewForm({ bookId, members, reviewedMemberIds }: Props
                         name="content"
                         required
                         placeholder="이 책에 대한 감상을 작성해주세요"
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-950 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
                         rows={3}
                     />
                 </div>

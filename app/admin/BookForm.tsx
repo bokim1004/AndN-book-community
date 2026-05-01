@@ -40,13 +40,9 @@ export default function BookForm() {
                         className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
                     >
                         <option value="">선택 안함</option>
-                        <option value="소설">소설</option>
-                        <option value="자기계발">자기계발</option>
-                        <option value="에세이">에세이</option>
-                        <option value="인문">인문</option>
-                        <option value="경제/경영">경제/경영</option>
-                        <option value="과학">과학</option>
-                        <option value="역사">역사</option>
+                        <option value="기획">기획</option>
+                        <option value="시스템">시스템</option>
+                        <option value="사람">사람</option>
                         <option value="기타">기타</option>
                     </select>
                 </div>
