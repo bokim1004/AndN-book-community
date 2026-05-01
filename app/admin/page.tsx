@@ -2,6 +2,8 @@ import { prisma } from "@/app/src/lib/prisma";
 import { deleteBook } from "@/app/actions/books";
 import BookForm from "./BookForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPage() {
     const books = await prisma.book.findMany({
         orderBy: { createdAt: "desc" },

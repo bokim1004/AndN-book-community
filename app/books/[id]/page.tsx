@@ -2,6 +2,8 @@ import { prisma } from "@/app/src/lib/prisma";
 import { notFound } from "next/navigation";
 import ReviewForm from "./ReviewForm";
 
+export const dynamic = "force-dynamic";
+
 interface Props {
     params: Promise<{ id: string }>;
 }

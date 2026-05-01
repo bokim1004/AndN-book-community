@@ -1,6 +1,8 @@
 import { prisma } from "@/app/src/lib/prisma";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 const GENRE_TAG_STYLES: Record<string, string> = {
     기획: "bg-amber-50 text-amber-700 border-amber-100",
     시스템: "bg-sky-50 text-sky-700 border-sky-100",

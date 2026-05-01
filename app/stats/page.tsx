@@ -1,5 +1,7 @@
 import { prisma } from "@/app/src/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export default async function StatsPage() {
     const [books, reviews, members] = await Promise.all([
         prisma.book.findMany({ orderBy: { startDate: "asc" } }),

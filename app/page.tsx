@@ -1,6 +1,8 @@
 import { prisma } from "@/app/src/lib/prisma";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 function getProgress(startDate: Date, endDate: Date): number {
   const now = Date.now();
   const start = startDate.getTime();
