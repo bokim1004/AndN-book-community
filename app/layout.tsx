@@ -46,9 +46,9 @@ export const metadata: Metadata = {
     description: "AndN 독서 모임 커뮤니티",
     images: [
       {
-        url: "/bg_img.png",
-        width: 1200,
-        height: 420,
+        url: "/mainBg.png",
+        width: 1024,
+        height: 559,
         alt: "AndN 북클럽",
       },
     ],
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AndN 북클럽",
     description: "AndN 독서 모임 커뮤니티",
-    images: ["/bg_img.png"],
+    images: ["/mainBg.png"],
   },
 };
 
