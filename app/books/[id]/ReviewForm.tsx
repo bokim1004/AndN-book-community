@@ -35,53 +35,68 @@ export default function ReviewForm({ bookId, members, reviewedMemberIds }: Props
     }
 
     return (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">
+        <div className="rounded-sm border border-ink/10 bg-paper/50 p-6 shadow-[0_24px_60px_-34px_rgba(27,38,32,0.5)]">
+            <h3 className="font-serif text-xl text-ink">
                 {alreadyReviewed ? "감상 수정" : "감상 작성"}
             </h3>
 
             {submitted && (
-                <div className="mb-4 text-sm text-emerald-700 bg-emerald-50 px-4 py-2 rounded-lg">
-                    저장되었습니다!
+                <div className="mt-4 rounded-sm border border-pine/20 bg-pine/[0.07] px-4 py-2 text-sm text-pine">
+                    저장되었습니다.
                 </div>
             )}
 
-            <form action={handleSubmit} className="space-y-4">
+            <form action={handleSubmit} className="mt-5 space-y-6">
                 <input type="hidden" name="memberId" value={selectedMemberId} />
 
+                {/* 이름 선택 */}
                 <div>
-                    <label className="text-xs text-gray-500 block mb-2">이름 선택</label>
+                    <label className="mb-2.5 block font-display text-[0.7rem] uppercase tracking-[0.2em] text-moss">
+                        이름 선택
+                    </label>
                     <div className="flex flex-wrap gap-2">
-                        {members.map((member) => (
-                            <button
-                                key={member.id}
-                                type="button"
-                                onClick={() => setSelectedMemberId(member.id.toString())}
-                                className="px-4 py-1.5 rounded-full text-sm font-medium transition-all border-2"
-                                style={{
-                                    backgroundColor:
-                                        selectedMemberId === member.id.toString()
-                                            ? member.color
-                                            : "transparent",
-                                    borderColor: member.color,
-                                    color:
-                                        selectedMemberId === member.id.toString()
-                                            ? "white"
-                                            : member.color,
-                                }}
-                            >
-                                {member.name}
-                            </button>
-                        ))}
+                        {members.map((member) => {
+                            const selected = selectedMemberId === member.id.toString();
+                            return (
+                                <button
+                                    key={member.id}
+                                    type="button"
+                                    onClick={() => setSelectedMemberId(member.id.toString())}
+                                    className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm transition-all ${
+                                        selected
+                                            ? "border-transparent text-white shadow-sm"
+                                            : "border-ink/15 text-ink/70 hover:border-ink/30"
+                                    }`}
+                                    style={
+                                        selected
+                                            ? { backgroundColor: member.color }
+                                            : undefined
+                                    }
+                                >
+                                    <span
+                                        className="h-1.5 w-1.5 rounded-full"
+                                        style={{
+                                            backgroundColor: selected ? "#ffffff" : member.color,
+                                        }}
+                                    />
+                                    {member.name}
+                                </button>
+                            );
+                        })}
                     </div>
                     {alreadyReviewed && (
-                        <p className="text-xs text-amber-500 mt-2">이미 작성한 감상이 있어요. 수정됩니다.</p>
+                        <p className="mt-2 text-xs text-brass">
+                            이미 작성한 감상이 있어요. 수정됩니다.
+                        </p>
                     )}
                 </div>
 
+                {/* 별점 */}
                 <div>
-                    <label className="text-xs text-gray-500 block mb-2">별점</label>
-                    <div className="flex gap-1">
+                    <label className="mb-2.5 block font-display text-[0.7rem] uppercase tracking-[0.2em] text-moss">
+                        별점
+                    </label>
+                    <div className="flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((star) => (
                             <button
                                 key={star}
@@ -89,26 +104,35 @@ export default function ReviewForm({ bookId, members, reviewedMemberIds }: Props
                                 onClick={() => setRating(star)}
                                 onMouseEnter={() => setHoverRating(star)}
                                 onMouseLeave={() => setHoverRating(0)}
-                                className="text-2xl transition-transform hover:scale-110 leading-none"
+                                className="text-2xl leading-none transition-transform hover:scale-110"
                             >
-                                <span style={{ color: star <= (hoverRating || rating) ? "#F59E0B" : "#D1D5DB" }}>
+                                <span
+                                    className={
+                                        star <= (hoverRating || rating)
+                                            ? "text-brass"
+                                            : "text-ink/15"
+                                    }
+                                >
                                     ★
                                 </span>
                             </button>
                         ))}
                         {rating > 0 && (
-                            <span className="text-sm text-gray-400 ml-2 self-center">{rating}점</span>
+                            <span className="ml-2 self-center text-sm text-ink/45">{rating}점</span>
                         )}
                     </div>
                 </div>
 
+                {/* 한줄 감상 */}
                 <div>
-                    <label className="text-xs text-gray-500 block mb-2">한줄 감상</label>
+                    <label className="mb-2.5 block font-display text-[0.7rem] uppercase tracking-[0.2em] text-moss">
+                        한줄 감상
+                    </label>
                     <textarea
                         name="content"
                         required
                         placeholder="이 책에 대한 감상을 작성해주세요"
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-950 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
+                        className="w-full resize-none rounded-sm border border-ink/15 bg-paper px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/35 focus:border-pine/40 focus:outline-none focus:ring-2 focus:ring-pine/20"
                         rows={3}
                     />
                 </div>
@@ -116,7 +140,7 @@ export default function ReviewForm({ bookId, members, reviewedMemberIds }: Props
                 <button
                     type="submit"
                     disabled={!selectedMemberId || rating === 0}
-                    className="bg-emerald-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="rounded-sm bg-pine px-6 py-2.5 text-sm text-paper transition-shadow hover:shadow-[0_18px_40px_-20px_rgba(31,92,61,0.75)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:shadow-none"
                 >
                     {alreadyReviewed ? "수정하기" : "작성하기"}
                 </button>

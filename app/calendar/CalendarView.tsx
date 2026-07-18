@@ -21,6 +21,18 @@ type Props = {
   months: string[];
 };
 
+// 장르별 팔레트 (책 목록·통계와 동일 매핑)
+const GENRE_CHIP: Record<string, string> = {
+  기획: "bg-brass/12 text-brass hover:bg-brass/20",
+  시스템: "bg-pine/12 text-pine hover:bg-pine/20",
+  사람: "bg-moss/15 text-moss hover:bg-moss/25",
+  기타: "bg-ink/[0.06] text-ink/65 hover:bg-ink/10",
+};
+
+function chipStyle(genre: string | null) {
+  return GENRE_CHIP[genre ?? "기타"] ?? GENRE_CHIP["기타"];
+}
+
 function dateKey(date: Date) {
   return date.toISOString().slice(0, 10);
 }
@@ -63,24 +75,26 @@ export default function CalendarView({ books, months }: Props) {
   const canGoNext = monthIndex > 0;
 
   return (
-    <section className="bg-white border border-gray-200 overflow-hidden">
-      <div className="bg-emerald-700 text-white px-3 py-3 sm:px-4">
+    <section className="animate-float-up delay-2 overflow-hidden rounded-sm border border-ink/10 shadow-[0_28px_70px_-40px_rgba(27,38,32,0.55)]">
+      <div className="bg-ink px-3 py-4 text-paper sm:px-4">
         <div className="flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => setMonthIndex((index) => Math.min(index + 1, months.length - 1))}
             disabled={!canGoPrev}
             aria-label="이전 달"
-            className="grid h-9 w-9 place-items-center rounded border border-emerald-500 text-lg disabled:cursor-not-allowed disabled:opacity-30"
+            className="grid h-9 w-9 place-items-center rounded-sm border border-paper/25 text-lg transition-colors hover:bg-paper/10 disabled:cursor-not-allowed disabled:opacity-30"
           >
             ‹
           </button>
 
           <div className="text-center">
-            <h2 className="font-semibold text-base">
+            <h2 className="font-serif text-lg">
               {year}년 {MONTH_NAMES[month - 1]}
             </h2>
-            <p className="mt-0.5 text-xs text-emerald-200">{monthBooks.length}권</p>
+            <p className="mt-0.5 font-display text-[0.66rem] uppercase tracking-[0.18em] text-paper/55">
+              {monthBooks.length} Volumes
+            </p>
           </div>
 
           <button
@@ -88,34 +102,39 @@ export default function CalendarView({ books, months }: Props) {
             onClick={() => setMonthIndex((index) => Math.max(index - 1, 0))}
             disabled={!canGoNext}
             aria-label="다음 달"
-            className="grid h-9 w-9 place-items-center rounded border border-emerald-500 text-lg disabled:cursor-not-allowed disabled:opacity-30"
+            className="grid h-9 w-9 place-items-center rounded-sm border border-paper/25 text-lg transition-colors hover:bg-paper/10 disabled:cursor-not-allowed disabled:opacity-30"
           >
             ›
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 bg-gray-100 border-b border-gray-200">
+      <div className="grid grid-cols-7 border-b border-ink/10 bg-paper-deep/50">
         {WEEKDAYS.map((weekday) => (
-          <div key={weekday} className="px-2 py-2 text-center text-[11px] font-medium text-gray-500">
+          <div
+            key={weekday}
+            className="px-2 py-2.5 text-center font-display text-[0.64rem] uppercase tracking-[0.12em] text-ink/40"
+          >
             {weekday}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 bg-gray-100 gap-px">
+      <div className="grid grid-cols-7 gap-px bg-ink/10">
         {days.map((day, index) => {
           if (!day) {
-            return <div key={`blank-${index}`} className="min-h-24 bg-gray-50 sm:min-h-32" />;
+            return <div key={`blank-${index}`} className="min-h-24 bg-paper-deep/30 sm:min-h-32" />;
           }
 
           const dayBooks = booksForDay(books, day);
 
           return (
-            <div key={dateKey(day)} className="min-h-24 bg-white p-1.5 sm:min-h-32 sm:p-2">
+            <div key={dateKey(day)} className="min-h-24 bg-paper p-1.5 sm:min-h-32 sm:p-2">
               <div className="mb-1 flex items-center justify-between">
-                <span className="text-xs font-medium text-gray-500">{day.getUTCDate()}</span>
-                {dayBooks.length > 0 && <span className="text-[10px] text-emerald-700">{dayBooks.length}</span>}
+                <span className="font-display text-xs text-ink/45">{day.getUTCDate()}</span>
+                {dayBooks.length > 0 && (
+                  <span className="text-[10px] font-medium text-pine">{dayBooks.length}</span>
+                )}
               </div>
 
               <div className="space-y-1">
@@ -127,12 +146,14 @@ export default function CalendarView({ books, months }: Props) {
                     <Link
                       key={book.id}
                       href={`/books/${book.id}`}
-                      className="block rounded bg-emerald-50 px-1.5 py-1 text-[10px] leading-tight text-emerald-900 hover:bg-emerald-100 sm:text-xs"
+                      className={`block rounded-[3px] px-1.5 py-1 text-[10px] leading-tight transition-colors sm:text-xs ${chipStyle(
+                        book.genre
+                      )}`}
                       title={`${book.title} - ${book.author}`}
                     >
                       <span className="block truncate font-medium">{book.title}</span>
                       {(isStart || isEnd) && (
-                        <span className="mt-0.5 block text-[9px] text-emerald-700 sm:text-[10px]">
+                        <span className="mt-0.5 block text-[9px] uppercase tracking-[0.08em] opacity-70 sm:text-[10px]">
                           {isStart ? "시작" : "완료"}
                         </span>
                       )}

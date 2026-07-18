@@ -25,10 +25,10 @@ export default function HeaderNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`text-sm font-medium transition-colors ${
+            className={`text-sm transition-colors ${
               active
-                ? "text-emerald-700"
-                : "text-gray-600 hover:text-gray-900"
+                ? "text-pine font-medium"
+                : "text-ink/55 hover:text-ink"
             }`}
             aria-current={active ? "page" : undefined}
           >

@@ -2,6 +2,14 @@ import { prisma } from "@/app/src/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
+// 장르별 팔레트 (책 목록·상세와 동일 매핑)
+const GENRE_BAR: Record<string, string> = {
+    기획: "bg-brass",
+    시스템: "bg-pine",
+    사람: "bg-moss",
+    기타: "bg-ink/40",
+};
+
 export default async function StatsPage() {
     const [books, reviews, members] = await Promise.all([
         prisma.book.findMany({ orderBy: { startDate: "asc" } }),
@@ -38,96 +46,135 @@ export default async function StatsPage() {
             : "—";
 
     const summaryCards = [
-        { label: "총 독서 권수", value: `${books.length}권`, icon: "📚" },
-        { label: "총 감상 수", value: `${reviews.length}개`, icon: "✍️" },
-        { label: "평균 별점", value: avgRating === "—" ? avgRating : `${avgRating}점`, icon: "⭐" },
-        { label: "멤버 수", value: `${members.length}명`, icon: "👥" },
+        { label: "Volumes", sub: "총 독서 권수", value: `${books.length}`, unit: "권" },
+        { label: "Reviews", sub: "총 감상 수", value: `${reviews.length}`, unit: "개" },
+        { label: "Avg. Rating", sub: "평균 별점", value: avgRating, unit: avgRating === "—" ? "" : "점" },
+        { label: "Members", sub: "멤버 수", value: `${members.length}`, unit: "명" },
     ];
 
+    const rankedMembers = [...members].sort((a, b) => b._count.reviews - a._count.reviews);
+    const maxReviews = Math.max(...members.map((m) => m._count.reviews), 1);
+
     return (
-        <div className="max-w-4xl mx-auto p-6 space-y-6">
-            <h1 className="text-xl font-bold text-gray-900">통계 대시보드</h1>
+        <div className="min-h-screen bg-paper">
+            <div className="mx-auto max-w-4xl px-6 pb-24 pt-16">
+                {/* ── 마스트헤드 ─────────────────────── */}
+                <header className="pb-10">
+                    <p className="animate-float-up font-display text-[0.7rem] uppercase tracking-[0.32em] text-moss">
+                        AndN · Statistics
+                    </p>
+                    <h1 className="animate-float-up delay-1 mt-5 font-serif text-5xl leading-[1.05] text-ink sm:text-6xl">
+                        통계
+                    </h1>
+                </header>
 
-            {/* 요약 카드 */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {summaryCards.map((card) => (
-                    <div key={card.label} className="bg-white rounded-xl border border-gray-200 p-5 text-center">
-                        <p className="text-3xl mb-2">{card.icon}</p>
-                        <p className="text-2xl font-bold text-gray-900">{card.value}</p>
-                        <p className="text-xs text-gray-400 mt-1">{card.label}</p>
-                    </div>
-                ))}
-            </div>
+                {/* ── 요약 타일 ──────────────────────── */}
+                <section className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                    {summaryCards.map((card, i) => (
+                        <div
+                            key={card.label}
+                            className="animate-float-up rounded-sm border border-ink/10 bg-paper/50 p-5 shadow-[0_18px_44px_-32px_rgba(27,38,32,0.5)]"
+                            style={{ animationDelay: `${0.05 * i}s` }}
+                        >
+                            <p className="font-display text-[0.64rem] uppercase tracking-[0.18em] text-moss">
+                                {card.label}
+                            </p>
+                            <p className="mt-3 font-serif text-4xl leading-none text-ink">
+                                {card.value}
+                                <span className="ml-0.5 text-lg text-ink/45">{card.unit}</span>
+                            </p>
+                            <p className="mt-2 text-xs text-ink/45">{card.sub}</p>
+                        </div>
+                    ))}
+                </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* 장르 분포 */}
-                <div className="bg-white rounded-xl border border-gray-200 p-6">
-                    <h2 className="font-semibold text-gray-900 mb-4 text-sm">장르 분포</h2>
-                    {genreEntries.length === 0 ? (
-                        <p className="text-sm text-gray-400">데이터 없음</p>
-                    ) : (
-                        <div className="space-y-3">
-                            {genreEntries.map(([genre, count]) => (
-                                <div key={genre}>
-                                    <div className="flex justify-between text-xs mb-1">
-                                        <span className="text-gray-700">{genre}</span>
-                                        <span className="text-gray-500 font-medium">{count}권</span>
+                <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+                    {/* ── 장르 분포 ──────────────────── */}
+                    <section className="rounded-sm border border-ink/10 bg-paper/50 p-6 shadow-[0_18px_44px_-32px_rgba(27,38,32,0.5)]">
+                        <h2 className="border-b border-ink/15 pb-2 font-display text-[0.7rem] uppercase tracking-[0.24em] text-ink/45">
+                            장르 분포
+                        </h2>
+                        {genreEntries.length === 0 ? (
+                            <p className="pt-4 text-sm text-ink/40">데이터 없음</p>
+                        ) : (
+                            <div className="mt-5 space-y-4">
+                                {genreEntries.map(([genre, count]) => (
+                                    <div key={genre}>
+                                        <div className="mb-1.5 flex items-baseline justify-between text-sm">
+                                            <span className="font-serif text-ink">{genre}</span>
+                                            <span className="text-ink/50">{count}권</span>
+                                        </div>
+                                        <div className="h-1.5 overflow-hidden rounded-full bg-ink/[0.07]">
+                                            <div
+                                                className={`h-full rounded-full ${GENRE_BAR[genre] ?? "bg-ink/40"}`}
+                                                style={{ width: `${(count / maxGenre) * 100}%` }}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                ))}
+                            </div>
+                        )}
+                    </section>
+
+                    {/* ── 월별 추이 ──────────────────── */}
+                    <section className="rounded-sm border border-ink/10 bg-paper/50 p-6 shadow-[0_18px_44px_-32px_rgba(27,38,32,0.5)]">
+                        <h2 className="border-b border-ink/15 pb-2 font-display text-[0.7rem] uppercase tracking-[0.24em] text-ink/45">
+                            월별 독서 현황
+                        </h2>
+                        {monthlyEntries.length === 0 ? (
+                            <p className="pt-4 text-sm text-ink/40">데이터 없음</p>
+                        ) : (
+                            <div className="mt-5 flex h-28 items-end gap-2">
+                                {monthlyEntries.map(([month, count]) => (
+                                    <div key={month} className="flex flex-1 flex-col items-center gap-1.5">
+                                        <span className="text-xs font-medium text-ink/55">{count}</span>
                                         <div
-                                            className="h-full bg-emerald-500 rounded-full"
-                                            style={{ width: `${(count / maxGenre) * 100}%` }}
+                                            className="w-full rounded-t-[2px] bg-pine/85"
+                                            style={{ height: `${(count / maxMonthly) * 72}px`, minHeight: "4px" }}
                                         />
+                                        <span className="font-display text-[0.62rem] text-ink/40">
+                                            {month.split(".")[1]}월
+                                        </span>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                                ))}
+                            </div>
+                        )}
+                    </section>
                 </div>
 
-                {/* 월별 추이 */}
-                <div className="bg-white rounded-xl border border-gray-200 p-6">
-                    <h2 className="font-semibold text-gray-900 mb-4 text-sm">월별 독서 현황</h2>
-                    {monthlyEntries.length === 0 ? (
-                        <p className="text-sm text-gray-400">데이터 없음</p>
-                    ) : (
-                        <div className="flex items-end gap-2 h-28">
-                            {monthlyEntries.map(([month, count]) => (
-                                <div key={month} className="flex-1 flex flex-col items-center gap-1">
-                                    <span className="text-xs text-gray-600 font-medium">{count}</span>
-                                    <div
-                                        className="w-full bg-emerald-500 rounded-t-sm"
-                                        style={{ height: `${(count / maxMonthly) * 72}px`, minHeight: "4px" }}
-                                    />
-                                    <span className="text-xs text-gray-400">{month.split(".")[1]}월</span>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* 멤버별 감상 수 */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h2 className="font-semibold text-gray-900 mb-4 text-sm">멤버별 감상 수</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {members
-                        .sort((a, b) => b._count.reviews - a._count.reviews)
-                        .map((member) => (
-                            <div key={member.id} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
-                                <div
-                                    className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                {/* ── 멤버별 감상 순위 ───────────────── */}
+                <section className="mt-6 rounded-sm border border-ink/10 bg-paper/50 p-6 shadow-[0_18px_44px_-32px_rgba(27,38,32,0.5)]">
+                    <h2 className="border-b border-ink/15 pb-2 font-display text-[0.7rem] uppercase tracking-[0.24em] text-ink/45">
+                        멤버별 감상 수
+                    </h2>
+                    <ul className="mt-5 space-y-4">
+                        {rankedMembers.map((member) => (
+                            <li key={member.id} className="flex items-center gap-4">
+                                <span
+                                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
                                     style={{ backgroundColor: member.color }}
                                 >
                                     {member.name[0]}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                    <div className="mb-1.5 flex items-baseline justify-between">
+                                        <span className="font-serif text-[0.95rem] text-ink">{member.name}</span>
+                                        <span className="text-sm text-ink/50">감상 {member._count.reviews}</span>
+                                    </div>
+                                    <div className="h-1.5 overflow-hidden rounded-full bg-ink/[0.07]">
+                                        <div
+                                            className="h-full rounded-full"
+                                            style={{
+                                                width: `${(member._count.reviews / maxReviews) * 100}%`,
+                                                backgroundColor: member.color,
+                                            }}
+                                        />
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-sm font-medium text-gray-900">{member.name}</p>
-                                    <p className="text-xs text-gray-400">{member._count.reviews}개</p>
-                                </div>
-                            </div>
+                            </li>
                         ))}
-                </div>
+                    </ul>
+                </section>
             </div>
         </div>
     );

@@ -43,13 +43,23 @@ export default async function CalendarPage() {
       : [];
 
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6">
-      <h1 className="text-xl font-bold text-gray-900 mb-6">독서 캘린더</h1>
+    <div className="min-h-screen bg-paper">
+      <div className="mx-auto max-w-5xl px-6 pb-24 pt-16">
+        <header className="pb-8">
+          <p className="animate-float-up font-display text-[0.7rem] uppercase tracking-[0.32em] text-moss">
+            AndN · Calendar
+          </p>
+          <h1 className="animate-float-up delay-1 mt-5 font-serif text-5xl leading-[1.05] text-ink sm:text-6xl">
+            독서 캘린더
+          </h1>
+          <p className="animate-float-up delay-2 mt-4 text-[0.95rem] text-ink/55">
+            월별로 흐르는 우리의 독서 리듬을 따라가 보세요.
+          </p>
+        </header>
 
       {months.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
-          <p className="text-5xl mb-4">📅</p>
-          <p className="text-sm">날짜가 등록된 책이 없어요.</p>
+        <div className="border-t border-ink/10 py-24 text-center">
+          <p className="font-serif text-2xl text-ink/60">날짜가 등록된 책이 없어요.</p>
         </div>
       ) : (
         <CalendarView
@@ -65,6 +75,7 @@ export default async function CalendarPage() {
           }))}
         />
       )}
+      </div>
     </div>
   );
 }

@@ -4,75 +4,132 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-const GENRE_TAG_STYLES: Record<string, string> = {
-    기획: "bg-amber-50 text-amber-700 border-amber-100",
-    시스템: "bg-sky-50 text-sky-700 border-sky-100",
-    사람: "bg-rose-50 text-rose-700 border-rose-100",
-    기타: "bg-gray-50 text-gray-600 border-gray-200",
+// 문예지 팔레트 기반 장르 태그 (파스텔 대신 톤 통일 · 채움으로 가독성 강화)
+const GENRE_STYLES: Record<string, string> = {
+  기획: "border-brass/30 bg-brass/12 text-brass",
+  시스템: "border-pine/25 bg-pine/12 text-pine",
+  사람: "border-moss/30 bg-moss/15 text-moss",
+  기타: "border-ink/15 bg-ink/[0.05] text-ink/55",
 };
 
 export default async function BooksPage() {
-    const books = await prisma.book.findMany({
-        orderBy: { startDate: "desc" },
-        include: {
-            _count: { select: { reviews: true } },
-        },
-    });
+  const books = await prisma.book.findMany({
+    orderBy: { startDate: "desc" },
+    include: {
+      _count: { select: { reviews: true } },
+    },
+  });
 
-    return (
-        <div className="max-w-5xl mx-auto p-6">
-            <h1 className="text-xl font-bold text-gray-900 mb-6">읽은 책 목록</h1>
-            {books.length === 0 ? (
-                <div className="text-center py-20 text-gray-400">
-                    <p className="text-5xl mb-4">📚</p>
-                    <p className="text-sm">아직 등록된 책이 없어요.</p>
-                    <Link href="/admin" className="text-emerald-600 hover:underline text-sm mt-2 inline-block">
-                        첫 번째 책 등록하기 →
-                    </Link>
-                </div>
-            ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {books.map((book) => (
-                        <Link key={book.id} href={`/books/${book.id}`} className="group">
-                            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md hover:border-emerald-200 transition-all">
-                                {book.coverUrl ? (
-                                    <Image
-                                        src={book.coverUrl}
-                                        alt={book.title}
-                                        width={240}
-                                        height={360}
-                                        className="w-full h-44 object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-full h-44 bg-gradient-to-br from-emerald-50 to-emerald-100 flex items-center justify-center">
-                                        <span className="text-4xl">📚</span>
-                                    </div>
-                                )}
-                                <div className="p-3">
-                                    <h3 className="font-semibold text-sm text-gray-900 line-clamp-2 group-hover:text-emerald-700 transition-colors">
-                                        {book.title}
-                                    </h3>
-                                    <p className="text-xs text-gray-400 mt-1">{book.author}</p>
-                                    <div className="flex items-center justify-between mt-2">
-                                        {book.genre && (
-                                            <span
-                                                className={`text-xs border px-2 py-0.5 rounded-full ${
-                                                    GENRE_TAG_STYLES[book.genre] ?? "bg-gray-50 text-gray-600 border-gray-100"
-                                                }`}
-                                            >
-                                                {book.genre}
-                                            </span>
-                                        )}
-                                        <span className="text-xs text-gray-400 ml-auto">
-                                            감상 {book._count.reviews}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
+  const now = new Date();
+  const isReading = (b: (typeof books)[number]) =>
+    !!b.startDate && b.startDate <= now && (!b.endDate || b.endDate >= now);
+
+  const totalReviews = books.reduce((sum, b) => sum + b._count.reviews, 0);
+
+  return (
+    <div className="min-h-screen bg-paper">
+      <div className="mx-auto max-w-6xl px-6 pb-24">
+        {/* ── 마스트헤드 ─────────────────────────── */}
+        <header className="pt-16 pb-10">
+          <p className="animate-float-up font-display text-[0.7rem] uppercase tracking-[0.32em] text-moss">
+            AndN · Library
+          </p>
+          <h1 className="animate-float-up delay-1 mt-5 font-serif text-5xl leading-[1.05] text-ink sm:text-6xl">
+            함께 읽은 책
+          </h1>
+          <p className="animate-float-up delay-2 whitespace-nowrap mt-5 max-w-md text-[0.95rem] leading-relaxed text-ink/55">
+            우리가 함께 펼친 {books.length}권의 기록. 표지를 눌러 각 책의
+            감상으로 들어가 보세요.
+          </p>
+
+          <div className="animate-float-up delay-2 mt-8 flex items-center gap-8 border-t border-ink/15 pt-4 font-display text-[0.72rem] uppercase tracking-[0.2em] text-ink/45">
+            <span>{books.length} Volumes</span>
+            <span>{totalReviews} Reviews</span>
+          </div>
+        </header>
+
+        {/* ── 목록 ───────────────────────────────── */}
+        {books.length === 0 ? (
+          <div className="border-t border-ink/10 py-24 text-center">
+            <p className="font-serif text-2xl text-ink/70">
+              아직 등록된 책이 없어요.
+            </p>
+            <Link
+              href="/admin"
+              className="mt-3 inline-block font-display text-sm uppercase tracking-[0.18em] text-moss transition-colors hover:text-pine"
+            >
+              첫 번째 책 등록하기 →
+            </Link>
+          </div>
+        ) : (
+          <ul className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
+            {books.map((book, i) => {
+              const reading = isReading(book);
+              return (
+                <li key={book.id}>
+                  <Link
+                    href={`/books/${book.id}`}
+                    className="animate-float-up group block"
+                    style={{ animationDelay: `${Math.min(i, 8) * 0.04}s` }}
+                  >
+                    {/* 표지 */}
+                    <div className="relative aspect-[2/3] w-full overflow-hidden rounded-sm border border-ink/10 bg-paper-deep shadow-[0_18px_40px_-26px_rgba(27,38,32,0.55)] transition-transform duration-300 group-hover:-translate-y-1.5">
+                      {book.coverUrl ? (
+                        <Image
+                          src={book.coverUrl}
+                          alt={book.title}
+                          fill
+                          sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-full w-full items-center justify-center font-display text-4xl italic text-ink/20">
+                          {book.title.charAt(0)}
+                        </span>
+                      )}
+
+                      {reading && (
+                        <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1.5 rounded-full border border-pine/20 bg-paper/85 px-2 py-0.5 font-display text-[0.6rem] uppercase tracking-[0.14em] text-pine backdrop-blur-sm">
+                          <span className="h-1.5 w-1.5 rounded-full bg-pine" />
+                          읽는 중
+                        </span>
+                      )}
+                    </div>
+
+                    {/* 정보 */}
+                    <div className="mt-3.5">
+                      <h3 className="line-clamp-2 font-serif text-[0.98rem] leading-snug text-ink transition-colors group-hover:text-pine">
+                        {book.title}
+                      </h3>
+                      <p className="mt-0.5 truncate text-xs text-ink/45">
+                        {book.author}
+                      </p>
+
+                      <div className="mt-2.5 flex items-center justify-between">
+                        {book.genre ? (
+                          <span
+                            className={`rounded-full border px-2.5 py-0.5 text-[0.72rem] font-medium ${
+                              GENRE_STYLES[book.genre] ??
+                              "border-ink/15 bg-ink/[0.05] text-ink/55"
+                            }`}
+                          >
+                            {book.genre}
+                          </span>
+                        ) : (
+                          <span />
+                        )}
+                        <span className="text-[0.72rem] font-medium text-ink/60">
+                          감상 {book._count.reviews}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
 }
