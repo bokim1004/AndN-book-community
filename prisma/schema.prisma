@@ -4,7 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Member {
@@ -37,7 +38,7 @@ model Book {
 model Review {
   id        Int      @id @default(autoincrement())
   content   String
-  rating    Int      @default(0)
+  rating    Float    @default(0)
   createdAt DateTime @default(now()) @map("created_at")
 
   book     Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
@@ -48,6 +49,18 @@ model Review {
 
   @@unique([bookId, memberId])
   @@map("reviews")
+}
+
+model WishBook {
+  id        Int      @id @default(autoincrement())
+  title     String
+  author    String?
+  category  String   @default("기타") // 기획 / 시스템 / 사람 / 기타
+  note      String?
+  link      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("wish_books")
 }
 
 model Meeting {

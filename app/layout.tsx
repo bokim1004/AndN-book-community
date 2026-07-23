@@ -71,8 +71,9 @@ export default function RootLayout({
     <html
       lang="ko"
       className={`h-full antialiased ${fraunces.variable} ${myeongjo.variable} ${plexKr.variable}`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-paper text-ink">
+      <body className="min-h-full flex flex-col bg-paper text-ink" suppressHydrationWarning>
         <nav className="bg-paper/80 backdrop-blur-md border-b border-ink/10 px-6 py-4 flex items-center gap-6 sticky top-0 z-10">
           <Link
             href="/"

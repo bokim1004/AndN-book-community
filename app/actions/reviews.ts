@@ -7,7 +7,7 @@ export async function upsertReview(formData: FormData) {
     const bookId = parseInt(formData.get("bookId") as string);
     const memberId = parseInt(formData.get("memberId") as string);
     const content = formData.get("content") as string;
-    const rating = parseInt(formData.get("rating") as string);
+    const rating = parseFloat(formData.get("rating") as string);
 
     await prisma.review.upsert({
         where: { bookId_memberId: { bookId, memberId } },

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
   { href: "/books", label: "책 목록" },
+  { href: "/wishlist", label: "읽고 싶은 책" },
   { href: "/calendar", label: "캘린더" },
   { href: "/stats", label: "통계" },
 ];

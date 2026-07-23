@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReviewForm from "./ReviewForm";
+import EditReviewButton from "./EditReviewButton";
 
 export const dynamic = "force-dynamic";
 
@@ -19,11 +20,21 @@ const GENRE_STYLES: Record<string, string> = {
 };
 
 function Stars({ value }: { value: number }) {
-    const full = Math.round(value);
     return (
-        <span className="tracking-[0.1em] text-sm leading-none">
-            <span className="text-brass">{"★".repeat(full)}</span>
-            <span className="text-ink/15">{"★".repeat(5 - full)}</span>
+        <span className="inline-flex text-sm leading-none tracking-[0.1em]">
+            {[1, 2, 3, 4, 5].map((star) => (
+                <span key={star} className="relative">
+                    <span className="text-ink/15">★</span>
+                    <span
+                        className="absolute inset-0 overflow-hidden text-brass"
+                        style={{
+                            width: `${Math.max(0, Math.min(1, value - (star - 1))) * 100}%`,
+                        }}
+                    >
+                        ★
+                    </span>
+                </span>
+            ))}
         </span>
     );
 }
@@ -169,6 +180,11 @@ export default async function BookDetailPage({ params }: Props) {
                                             {review.content}
                                         </p>
                                     </div>
+                                    <EditReviewButton
+                                        memberId={review.memberId}
+                                        content={review.content}
+                                        rating={review.rating}
+                                    />
                                 </li>
                             ))}
                         </ul>
