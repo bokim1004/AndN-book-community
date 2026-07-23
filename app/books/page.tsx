@@ -37,9 +37,9 @@ export default async function BooksPage() {
           <h1 className="animate-float-up delay-1 mt-5 font-serif text-5xl leading-[1.05] text-ink sm:text-6xl">
             함께 읽은 책
           </h1>
-          <p className="animate-float-up delay-2 whitespace-nowrap mt-5 max-w-md text-[0.95rem] leading-relaxed text-ink/55">
-            우리가 함께 펼친 {books.length}권의 기록. 표지를 눌러 각 책의
-            감상으로 들어가 보세요.
+          <p className="animate-float-up delay-2 mt-5 max-w-md text-balance text-[0.95rem] leading-relaxed text-ink/55">
+            우리가 함께 펼친 {books.length}권의 기록.
+            <br /> 표지를 눌러 각 책의 감상으로 들어가 보세요.
           </p>
 
           <div className="animate-float-up delay-2 mt-8 flex items-center gap-8 border-t border-ink/15 pt-4 font-display text-[0.72rem] uppercase tracking-[0.2em] text-ink/45">
